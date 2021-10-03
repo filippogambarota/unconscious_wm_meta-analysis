@@ -49,9 +49,5 @@ po/*~
 .secrets/
 
 # exclude everything
-mod/*
-mod/sensitivity_analysis/*
-
-# exception to the rule
-!mod/.gitkeep 
-!mod/sensitivity_analysis/.gitkeep
+mod/*.rds
+mod/sensitivity_analysis/*.rds
