@@ -1,0 +1,684 @@
+---
+title: "Unconscious Visual Working Memory. A critical review and Bayesian meta-analysis"
+subtitle: "Supplementary Materials"
+author: "Filippo Gambarota"
+bibliography: ["reference.bib"]
+biblio-style: "apalike"
+link-citations: true
+header-includes:
+- \usepackage{pdflscape}
+- \newcommand{\blandscape}{\begin{landscape}}
+- \newcommand{\elandscape}{\end{landscape}}
+- \AddToHook{cmd/section/before}{\clearpage}
+- \usepackage{booktabs}
+- \usepackage{longtable}
+- \usepackage{array}
+- \usepackage{multirow}
+- \usepackage{wrapfig}
+- \usepackage{float}
+- \usepackage{colortbl}
+- \usepackage{tabu}
+- \usepackage{threeparttable}
+- \usepackage{threeparttablex}
+- \usepackage[normalem]{ulem}
+- \usepackage{makecell}
+- \usepackage{xcolor}
+output: 
+  bookdown::pdf_document2:
+    citation_package: natbib
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE,
+                      fig.align = "center",
+                      fig.retina = 2,
+                      dpi = 300,
+                      out.height = "\\textheight",  
+                      out.width = "\\textwidth",
+                      message = FALSE,
+                      warning = FALSE)
+
+options(knitr.kable.NA = '')
+```
+
+```{r packages}
+library(tidyverse)
+library(flextable)
+library(kableExtra)
+library(here)
+library(metafor)
+```
+
+```{r functions}
+load_all_objects <- function(){
+  all_objs <- list.files(here("objects"), full.names = T, pattern = ".rds")
+  out <- map(all_objs, read_rds)
+  obj_names <- str_remove(basename(all_objs), ".rds")
+  names(out) <- obj_names
+  return(out)
+}
+
+load_all_funs <- function(){
+  invisible(
+    sapply(list.files(here("functions"), full.names = T, pattern = ".R"),
+         source)
+  )
+}
+
+make_table <- function(data, caption){
+  data %>% 
+    kbl(format = "latex", 
+      longtable = T,
+      digits = 2,
+      caption = caption,
+      booktabs = T) %>% 
+  kable_styling(full_width = F)
+}
+```
+
+```{r loading-files, include = FALSE}
+meta_clean <- read_rds(here("data", "cleaned", "meta_analysis_data.rds"))
+all_obj <- load_all_objects()
+load_all_funs()
+```
+
+# General Information
+
+This is a general supplementary file for the meta-analysis paper. Within
+the [OSF repository](link) is also available the entire script in order
+to reproduce the analysis.
+
+## R Project
+
+The R project allow to reproduce all the analytic approach of the paper.
+The project is organized as:
+
+-   `\data`: contains raw and cleaned data in `.xlsx`, `.rds` and `.csv`
+    format
+-   `\objects`: contains all models and files as `.rds`
+-   `\function`: contains all custom functions
+-   `\figures`: contains all figures
+-   `\mod`: contains all fitted models. Given the size of the folder,
+    the content is not present in the repository but can be easily
+    recreated from the `1_models.R` script. The `\objects` folder
+    contains all tables and post-processing objects of relevant models.
+-   `\tables`: contains all tables as `.pdf` and `docx`
+-   `\supplementary_materials`: contains the `.Rmd` file to reproduce
+    this document
+
+In the root folder there are the following scripts:
+
+- `0_preprocessing.R`: takes the raw data and create the cleaned version for the analysis
+- `1_models.R`: for fitting all the relevant models
+- `2_sensitivity_analysis.R`: for computing the prior and LOO sensitivity analysis
+- `3_post_processing_models.R`: for creating models tables and summary statistics
+- `4_post_processing_sensitivity.R`: for creating sensitivity analysis tables and summary statistics
+- `5_creating_figures.R`: to reproduce figures of the paper
+- `6_creating_tables.R`: to reproduce tables of the paper
+
+Custom functions are:
+
+-   `\functions\plotting_functions.R`: all functions to create plots
+-   `\functions\utils.R`: wrappers and simple functions to work in the
+    project
+-   `\functions\post_processing_functions.R`: functions to compute all
+    sensitivity analyses and post-processing of fitted models
+
+## The dataset
+
+The main dataset for the meta-regression has the following columns:
+
+```{r}
+colnames(meta_clean)
+```
+
+-   `study`: index of the paper
+-   `substudy`: index of the substudy
+-   `first_author`/`first_author_mod`: the first author name (for
+    plotting)
+-   `study_id`: index of the study with the author name
+-   `study_meta`: index of the paper with the author name
+-   `published`: if the study is published or not
+-   `year`: publication year
+-   `paradigm`: the Working Memory paradigm
+-   `blinding_paradigm`: the consciousness manipulation paradigm
+-   `target_duration`: the target presentation time (ms)
+-   `target_type`: the category of the target
+-   `task_type`: the working memory task category
+-   `treshold_stimulus`: if the to-be-remembered stimulus is at
+    detection threshold
+-   `aware_question`: the method to assess consciousness
+-   `retention_interval`: the lenght of the retention interval (ms)
+-   `implicit`: is the Working Memory task explicit or not
+-   `sample_size`: The number of included participants
+-   `ntrials`: the actual average number of trials per participant after
+    selecting unseen trials
+-   `ntrials_valid`: the total number of trials per participant
+    potentially valid (e.g., no catch trials)
+-   `tot_trials`: the estimate number of valid-unseen trials of the full
+    experiment (i.e., `sample_size x ntrials`)
+-   `mean_acc`: the mean accuracy score in WM task (percentage or $d'$)
+-   `chance_level`: the chance level of the experiment (e.g., 0.5 for
+    binary accuracy or 0 for $d'$)
+-   `acc_measure`: percentage of correct response or $d'$
+-   `eff_size_g`: the effect size measure
+-   `eff_size_variance_g`: the variance of the effect size
+-   `eff_size_se_g`: the standard error of the effect size
+-   `ntrials0`: mean-centered version of `ntrials`
+-   `sample_size0`: mean-centered version of `sample_size`
+
+## The meta-analysis model
+
+The three-level meta-analysis extend the standard 2 level random-effect
+meta-analysis adding a clustering level at the paper (level 3) level [@Cheung2019-wd; @Cheung2014-ik; @Cheung2015-bw; @Van_den_Noortgate2013-za]
+Effect sizes within the paper are assumed to be independent. The model
+takes into account the within-cluster dependency (i.e., an effect from
+the paper 1 is more similar to another effect from same paper compared
+to another effect nested in another paper) estimating both the
+within-paper and between-paper heterogeneity.
+
+Relevant information for the meta-analysis is:
+
+-   Mean accuracy scores or equivalent performance score
+-   Standard deviation of accuracy/performance scores
+-   Mean number of analyzed trials per participant[^1]
+
+[^1]: This information has been extracted from raw data if available or
+    estimated from aggregated data
+
+## Effect size computation
+
+We computed the Cohen's $d_z$ as effect size measure because all papers
+adopted a one-sample t-test analysis against the chance level. The
+effect size is computed as:
+
+$$
+d_z = \frac{\hat{\mu} - \mu_0}{\hat\sigma}
+$$ Where $\hat\mu$ and $\hat\sigma$ are the sample mean and standard
+deviation and $\mu_0$ is the chance level.
+
+The effect size variance is computed as:
+
+$$
+V_d = \frac{1}{n} + \frac{d^2}{2n}
+$$ Where $n$ is the sample size and $d$ is the effect size.
+
+Then we trasform it to an Hedges's $g$ measure applying a correction for
+small samples $J$ with $df$ is $n - 1$ as:
+
+$$J = 1 - \frac{3}{4df-1}$$ The correction factor is applied to the
+effect size as $g = J \times d$ and the variance $V_g = J^2 \times V_d$.
+
+## Other relevant computations
+
+Relevant measures in three-level meta-analysis models are the percentage of explained heterogeneity ($R^2$) and the percentage of heterogeneity associated with a specific clustering level (*intra-class correlation*). We use the formulas provided by Cheung [-@Cheung2019-po; -@Cheung2014-fg]. We used the **median** of each relevant posterior distribution parameter in order to compute the formula. The computation of the $R^2$ values can be sometimes negative due to the $\tau$ estimation, in that case the value was truncated to 0.
+
+## Models
+
+Following the Williams and collegues [-@Williams2018-wu] and Molto and colleagues [-@Molto2020-az] notation, the equation for the Bayesian multilevel model is:
+
+```{=tex}
+\begin{equation}\label{eq1}
+  \begin{gathered}
+    \hat{\mu}_{ij} = \alpha + \alpha_{paper_j} + \alpha_{study_{ij}} + \epsilon_{ij}\\
+    \epsilon_{ij} \sim Normal(0, \sigma_{ij}) \\
+  \end{gathered}
+\end{equation}
+```
+
+Each observed effect is a linear combination of the overall average effect $\alpha$. Then each effect has a $\tau_{paper_{i}}$ and a $\tau_{study_{ij}}$ for being part of a given paper (cluster).
+
+Bayesian modelling requires prior distributions on each estimated
+parameter:
+
+```{=tex}
+\begin{equation}\label{eq2}
+  \begin{gathered}
+    \alpha_{paper_j} \sim Normal(0, \tau_{paper})\\
+    \alpha_{study_{ij}} \sim Normal(0, \tau_{study}) \\
+    \alpha \sim Normal(0, 2) \\
+    \tau_{paper, study} \sim HalfCauchy(0, 1)
+  \end{gathered}
+\end{equation}
+```
+
+Models are fitted using the `brms` package [@Burkner2017-bp;
+@Burkner2018-vz]. The general setup of a `brms` model is the following:
+
+```{r overall-model, eval = FALSE, echo=TRUE}
+brm(yi|se(sei) ~ 0 + Intercept + (1|paper_id/effect_id),
+    iter = 15000, # number of iterations for each MCMC chain
+    chains = 6)  # number of MCMC chains
+```
+
+We choose an high number of iterations and chains in order to have more stable results and a high effective sample size (ESS) for each estimated parameter.
+
+The `(1|paper_id/effect_id)` part is the way `brms` handle the
+**three-level** meta-analysis model estimating a nested random-effect
+where a particular effect size $i$ is nested within the paper $j$.
+
+The general form of the meta-regression:
+
+```{r meta-regression, eval = FALSE, echo=TRUE}
+brm(yi|se(sei) ~ 0 + <predictors> + (1|paper_id/effect_id),
+    iter = 15000, # number of iterations for each MCMC chain
+    chains = 6)  # number of MCMC chains
+```
+
+In particula for categorical predictors, we used the **cell-mean parametrization** `0 +` (i.e., removing the intercept) in order to compute directly the estimated mean for each predictor level and eventually compute the desired contrast from the posterior distribution [@Schad2020-l]
+
+Given that we are essentially estimating the average effect size for each experimental condition, we used the same prior distribution for each parameter.
+
+## Studies description
+
+### Soto et al. [-@Soto2011-th]
+
+We included all four experiments and we requested authors further
+information about data.
+
+### Pan et al. [-@Pan2014-jy]
+
+We included the Experiment 2 where the to-be-memorized target is
+directly manipulated in terms of visibility. Moreover, in line with
+other papers, we considered only change-detection accuracy and not the
+reaction times effect.
+
+### Dutta et al. [-@Dutta2014-bh]
+
+We included all studies.
+
+### Bergström et al. [-@Bergstrom2014-ma]
+
+We considered separately the Experiment 1 (behavioral only), the
+Experiment 2 (pre-fMRI session) and the Experiment 3 (post-fMRI
+session). We requested authors additional information about aggregated
+data.
+
+### Bergström et al. [-@Bergstrom2015-po]
+
+We included all studies. We requested authors additional information
+about aggregated data.
+
+### Bergström et al. [-@Bergstrom2018-xi]
+
+We included all studies. We requested authors additional information
+about aggregated data.
+
+### Nakano et al. [-@Nakano2020-ij]
+
+We included all studies. Authors had different conditions and made a
+separate analysis on visibility conditions:
+
+We selected:
+
+-   NcNc (1st and 2nd stimulus low visibility **AND** PAS 1 ratings)
+-   NcC (1st stimulus low visibility 2nd stimulus high-visibility
+    **AND** PAS 1 ratings)
+-   CNc (1st stimulus high visibility 2nd stimulus low visibility
+    **AND** PAS 1 ratings)
+
+We requested authors additional information about aggregated data.
+
+### King et al. [-@King2016-hm]
+
+We included all studies. We requested authors additional information
+about aggregated data.
+
+### Trübutschek et al. [-@Trubutschek2017-zl]
+
+We included all studies. The reported behavioral results refers to the
+working memory accuracy task and not the working memory precision. We
+requested authors additional information about aggregated data.
+
+### Trübutschek et al. [-@Trubutschek2019-bw]
+
+We included all studies. The reported behavioral results refers to the
+working memory accuracy task and not the working memory precision. We
+requested authors additional information about aggregated data.
+
+### Trübutschek et al. [-@Trubutschek2019-ct]
+
+We included all studies. The reported behavioral results refers to the
+working memory accuracy task and not the working memory precision. We
+requested authors additional information about aggregated data.
+
+### Taglialatela-Scafati [-@Taglialatela_Scafati2019-ux]
+
+We included all studies. The thesis has several different studies
+divided in:
+
+-   Experiments 1-6: continuous flash suppression manipulation + WM
+    paradigm
+-   Experiments 7-9: backward masking manipulation + WM paradigm
+-   Experiments 10-11: conceptual replication of Soto et al.(2011) using
+    a similar paradigm as previous experiments
+-   Experiment 12-15: direct Soto et al.(2011) replications with
+    variants
+
+The thesis is a single manuscript but given the methodological
+heterogeneity and the different scopes of experiments we divided as
+follows:
+
+-   Paper 1: Experiments 1-6
+-   Paper 2: Experiments 7-9
+-   Paper 3: Experiments 10-11
+-   Paper 4: Experiment 12-15
+
+The idea was to divide experiments is a way similar to a published paper
+in order to better model the dependency structure. Having 15 effect
+sizes on a single paper is an artifact of the thesis organization.
+Considering 15 experiments should have given too much weight to a single
+paper with the assumption of estimating the same effect size. We
+requested authors additional information about aggregated data.
+
+### Barton [-@Barton2018-ph]
+
+We included all studies. We requested authors additional information
+about aggregated data.
+
+# Model Diagnostics
+
+## Fitting diagnostic
+
+Models are evaluated using the $\hat{R}$ value @Gelman1992-nb and the
+**Effective Sample Size**. The Table \@ref(tab:models). provide the
+diagnostic features for each fitted model.
+
+```{r models, echo=FALSE}
+all_obj$mod_tab %>% 
+  select(-conf_level) %>% 
+  kbl(format = "latex", 
+      longtable = T,
+      caption = 'Details of all fitted models',
+      booktabs = T) %>% 
+  kable_styling(full_width = F) %>% 
+  collapse_rows(columns = 1:(ncol(all_obj$mod_tab) - 1), latex_hline = "full", valign = "middle") %>% 
+  landscape()
+```
+
+## Prior sensitivity analysis
+
+The impact of prior distribution on Bayesian models is often discussed [@Gelman2008].
+The prior sensitivity analysis consist of evaluating the model
+parameters estimation as a function of different prior uncertainty
+(i.e., the scale parameter of the prior distribution). Figure
+\@ref(fig:prior-sens) represents the average effect size and $\tau$
+estimation as a function of prior uncertainty. For the average effect
+priors uncertainty is determined by the standard deviation
+$Effect \sim Normal(0, sd_i)$ and for $\tau$ the uncertainty is the
+scale parameter of the half-cauchy distribution
+$\tau_{paper, study} \sim HalfChaucy(0, scale_i)$. The Figure
+\@ref(fig:prior-plot) represents the chosen prior distributions:
+
+```{r prior-plot, fig.cap="Prior distributions for the average effect and the heterogeneity", out.width=200}
+all_obj$prior_plot
+```
+
+```{r prior-sens, fig.cap="Prior sensitivity analysis. In blue are represented the priors used in the main analysis"}
+all_obj$sens_prior_avg_clean %>%
+  bind_rows(., all_obj$sens_prior_tau_clean) %>% 
+  mutate(paper_value = case_when(prior == 2 & .param == "Average" ~ "1",
+                                 prior == 1 & startsWith(.param, "Tau") ~ "1",
+                                 TRUE ~ "0")) %>% 
+  ggplot(aes(x = factor(prior), y = .value)) +
+  facet_wrap(~.param, scales = "free_y") +
+  geom_line(aes(group = 1)) +
+  geom_point(aes(color = paper_value), size = 4) +
+  cowplot::theme_minimal_grid() +
+  xlab("Prior") +
+  ylab("Value") +
+  theme(legend.position = "none")
+```
+
+Is clear that using reasonable prior distribution (i.e., when the range of plausible values is compatible with the phenomenon of interest) do not impact the parameters estimation.
+
+## Leave-one-out sensitivity analysis
+
+Another important diagnostic also in the meta-analysis field is the
+outliers analysis. Especially when the amount of studies is small, a
+single effect size or cluster of effect size can have a great impact on
+the estimation. We refitted the same model removing one effect/papers
+and reporting the impact on the the estimation average effect and $\tau$
+estimation.
+
+### Removing papers
+
+The figure \@ref(fig:loo-paper) present the effect of removing one paper
+on the mean effect and taus estimation.
+
+```{r loo-paper, fig.cap="Removing one paper", fig.height=10}
+all_obj$sens_fit_paper_clean %>% 
+  mutate(mod = factor(mod),
+         mod = fct_relevel(mod, "Overall"),
+         paper_value = ifelse(mod == "Overall", "0", "1")) %>% 
+  ggplot(aes(x = mod, y = .value)) +
+  geom_line(aes(group = 0)) +
+  geom_point(aes(color = paper_value), size = 4) +
+  facet_wrap(~.param, ncol = 1, scales = "free_y") +
+  cowplot::theme_minimal_grid() +
+  theme(axis.title.x = element_blank(),
+        axis.text.x = element_text(size = 10),
+        legend.position = "none") +
+  ggpubr::rotate_x_text(45) +
+  ylab("Value")
+```
+
+The table \@ref(tab:loo-paper-tab) represents some statistics about the
+loo analysis:
+
+```{r loo-paper-tab, fig.height=5}
+all_obj$sens_fit_paper_clean %>% 
+  filter(mod != "overall") %>% 
+  group_by(.param) %>% 
+  summarise(.sd = sd(.value),
+            .min = min(.value),
+            .max = max(.value)) %>% 
+  make_table(., caption = "Loo paper")
+```
+
+### Removing studies
+
+The figure \@ref(fig:loo-study-fig) present the effect of removing one
+paper on the mean effect and taus estimation.
+
+```{r loo-study-fig, fig.cap="Removing one study", fig.height=10}
+all_obj$sens_fit_study_clean %>% 
+  mutate(mod = factor(mod),
+         mod = fct_relevel(mod, "Overall"),
+         paper_value = ifelse(mod == "Overall", "0", "1")) %>% 
+  ggplot(aes(x = mod, y = .value)) +
+  geom_line(aes(group = 0)) +
+  geom_point(aes(color = paper_value), size = 4) +
+  facet_wrap(~.param, ncol = 1, scales = "free_y") +
+  cowplot::theme_minimal_grid() +
+  theme(axis.title.x = element_blank(),
+        axis.text.x = element_text(size = 7),
+        legend.position = "none") +
+  ggpubr::rotate_x_text(45) +
+  ylab("Value")
+```
+
+The table \@ref(tab:loo-study-tab) represents some statistics about the
+loo analysis:
+
+```{r loo-study-tab}
+all_obj$sens_fit_study_clean %>% 
+  filter(mod != "overall") %>% 
+  group_by(.param) %>% 
+  summarise(.sd = sd(.value),
+            .min = min(.value),
+            .max = max(.value)) %>% 
+  make_table(., caption = "Loo study")
+```
+
+In general, there are no highly influential results. Some paper/study are more relevant for the final estimation but the range of variability is very low.
+
+## Publication Bias
+
+The publication bias is assessed using the Egger regression approach
+(see <https://wviechtb.github.io/metafor/reference/regtest.html>). For
+this reason we fitted a non-bayesian random-effects model and used it
+for the **funnel plot** and the **egger-regression**:
+
+```{r egger-test, echo=FALSE}
+fit_rma <- rma(eff_size_g, eff_size_variance_g, data = meta_clean)
+fit_egger <- regtest(fit_rma, model = "rma", predictor = "sei")
+fit_rma
+fit_egger
+```
+
+An important point is that the funnel plot analysis or the regression approach are only possible indicators of publication bias, without providing clear evidence. The publication bias assessment is also undermined by the presence of high heterogeneity [@Terrin2003; @Peters2010].
+
+# Models Analysis
+
+```{r}
+all_obj$icc_tab %>% 
+  split(., .$mod) %>% 
+  map(., function(x) select(x, icc2, icc3)) %>% 
+  map(., function(x) apply(x, 2, median)) %>% 
+  bind_rows(., .id = "mod") %>% 
+  clean_mod_names(., col_mod = mod) %>% 
+  make_table(., caption = "ICC table for relevant models")
+```
+
+
+The Table \@ref(tab:rope) contains parameters and ROPE analysis for each
+relevant model.
+
+```{r rope}
+mod_to_keep <- c("fit0", "fit_author", "fit_blind", "fit_paradigm", "fit_targetdur_bin")
+
+all_obj$rope_table %>% 
+  filter(mod %in% mod_to_keep) %>% 
+  clean_mod_names(., mod) %>% 
+  clean_param_names(., .param) %>% 
+  select(-.width, -.interval, -.point) %>%
+    mutate(within_rope = ifelse(startsWith(.param, "Tau"), NA, within_rope),
+         outside_rope = ifelse(startsWith(.param, "Tau"), NA, outside_rope)) %>% 
+  make_table(caption = 'Rope table of relevant models') %>% 
+  kable_styling(full_width = F, font_size = 7) %>% 
+  collapse_rows(columns = 1, latex_hline = "full", valign = "middle") %>% 
+  landscape()
+```
+
+The table \@ref(tab:trials-table) The study by Pan and colleagues
+[-@Pan2014-jy] do not report the number of analyzed trials so is not
+included in the table.
+
+```{r trials-table}
+all_obj$trials_tables$blind_trials %>% 
+  make_table(., caption = "Trials table for each blinding paradigm")
+
+meta_clean <- meta_clean %>% 
+  drop_na(ntrials) %>% # removing Pan (2014)
+  mutate(new_blind = ifelse(blinding_paradigm == "Sandwitch Masking",
+                            "Backward Masking", blinding_paradigm),
+         drop_percentage = (n_trials_valid - ntrials) / n_trials_valid * 100)
+```
+
+The mean percentage of discarded trials is
+`r mean(meta_clean$drop_percentage)` with a minimum of
+`r min(meta_clean$drop_percentage)` and a maximum of
+`r max(meta_clean$drop_percentage)`.
+
+The prediction interval is one of the most important information from a
+random-effect meta-analysis because represents the range of plausible
+values, taking into account both the variability in estimating the mean
+effect and the heterogeneity. In this case the prediction interval is
+computed using the formula provided by Riley [-@Riley2011-hp]
+
+$$
+CI = \hat\mu \pm z\sqrt{\tau^2_{paper} + \tau^2_{study} + + SE_{\hat\mu^2}}
+$$
+
+```{r}
+all_obj$pred_interval %>% 
+  make_table(caption = "prediction interval")
+```
+
+# Extra analysis
+
+## Individual power level
+
+As reported in the section \@ref(effect-size-computation), the majority
+of papers reported a one-sample t-test against the chance-level for
+supporting the unconscious WM effect.This can be considered a reasonable
+approach, however the more appropriate way is to consider this situation
+as a **multilevel model**.
+
+The probability of success for each participant $\hat{p_i}$ is estimated
+from the available trials and all participants contribute to estimate
+the true probability of success for the WM effect $\hat{p}$. We have two
+source of variation here, the subject-level precision determined by the
+amount of analyzed trials and the population-level precision determined
+by the variability between-subjects.
+
+In the majority of included papers is performed a post-hoc trial
+selection according to the participant reported experience. This bring
+an important source of variability because each participant has a
+different amount of trials (i.e., precision). The figure
+\@ref(fig:ind-power) depict the power curves for a single-subject
+proportion for different number of trials.
+
+```{r, ind-power, fig.cap="Power curves for a single participant using a range of probability of success and number of trials."}
+all_obj$sim_trials %>% 
+  filter(p <= 0.8) %>% 
+  ggplot(aes(x = ntrials, y = p, z = power)) +
+  stat_contour_filled() +
+  theme_minimal() +
+  theme(aspect.ratio=1) +
+  xlab("Number of trials") +
+  ylab("% Accuracy") +
+  labs(fill = "Power")
+```
+
+In a real scenario each subject will have a different *true* proportion
+of correct responses and a different number of *available trials* for
+each participant after the post-hoc selection.
+
+# Packages
+
+This is the list of all used packages:
+
+```{r used-pkgs, results='asis'}
+folder_list <- c(".", "functions", "supplementary_materials")
+exts <- c(".R", ".Rmd")
+get_all_pakages(folder_list, exts) %>% 
+  paste("-", .) %>% 
+  cat(., sep = "\n")
+```
+
+# Credits
+
+For the general idea of the (Bayesian) multilevel meta-analysis
+
+-   The book "Doing meta-analysis in R" by Harrer et al.
+    [-@Harrer2021-bz]
+
+For the implementation of the meta-analysis in `brms` and for the model
+specification
+
+-   <https://mvuorre.github.io/blog/posts/2016-09-29-bayesian-meta-analysis/>
+-   <https://solomonkurz.netlify.app/post/bayesian-meta-analysis/>
+-   The [supplementary
+    materials](https://files.osf.io/v1/resources/bc3wn/providers/github/supplementary_materials/supplementary_materials.pdf?action=download&version&direct)
+    by Molto et al. [-@Molto2020-az]
+
+For the **forest plot**
+
+-   <https://github.com/mvuorre/brmstools#forest-plots>
+
+# Acknowledgments
+
+A special thanks to all authors that collaborate giving extra
+information or making available raw data:
+
+-   Dr. David Soto
+-   Dr. Fredrik Bergström
+-   Dr. Darinka Trübutschek
+-   Dr. Shun Nakano and Dr. Masami Ishihara
+-   Dr. Amy Underwood Barton
+-   Dr. Ilaria Taglialatela-Scafati

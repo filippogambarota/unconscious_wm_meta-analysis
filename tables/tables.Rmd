@@ -1,0 +1,40 @@
+---
+title: "Tables"
+output: 
+  bookdown::html_document2
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+library(flextable)
+library(here)
+library(tidyverse)
+
+tables <- read_rds(here("objects", "tables_report.rds"))
+set_flextable_defaults(fonts_ignore=TRUE)
+```
+
+```{r studies-table}
+tables$studies_table_paper %>% 
+  set_caption("Overall table with included studies.")
+```
+
+<br/>
+<br/>
+<br/>
+
+
+```{r metaregression-table}
+tables$rope_table_paper %>% 
+  set_caption("Metaregression table. For each fitted model and parameter is reported the posterior distribution summary using the median as point estimate and the 89% HPDI. Furthermore for relevant parameters is reported the percentage of the 89% HPDI within/outside the ROPE.")
+```
+
+<br/>
+<br/>
+<br/>
+
+```{r loo-table}
+tables$loo_tab_paper %>% 
+  set_caption("LOOIC-CV table. For each model is reported the LOOIC value, the standard error, the associated weight and the percentage of explained heterogeneity")
+```
