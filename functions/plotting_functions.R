@@ -49,24 +49,26 @@ plot_forest <- function(meta_list, size_fac = 1){
   
   ggplot() +
     geom_vline(xintercept = meta_list$avg_summ$y, # mean
-               col = "black", size = 0.5, alpha = 0.5, linetype = "dashed") +
-    geom_vline(xintercept = meta_list$pred_interval$lower, # lower PI
-               col = "black", size = 1, alpha = 0.07) +
-    geom_vline(xintercept = meta_list$pred_interval$upper, # upper PI
-               col = "black", size = 1, alpha = 0.07) +
+               col = "darkgrey", size = 0.9, linetype = "dashed") +
+    geom_segment(aes(x = meta_list$pred_interval$lower, 
+                     xend = meta_list$pred_interval$upper,
+                     y = 0.2, 
+                     yend = 0.2),
+                 size = 3,
+                 color = "darkgray") +
     geom_pointrange(data = meta_list$post %>% filter(!paper == "Average"),
                     aes(x = y, y = paper, xmin = ymin, xmax = ymax,
-                        col = published), size = 1.2) +
+                        col = published, shape = published), size = 1.2) +
     stat_halfeye(data = meta_list$avg, aes(x = b_Intercept, y = paper), fill = "lightblue", size = 4) +
-    #geom_pointrange(data = meta_list$post %>% filter(paper == "Average"),
-                     #aes(x = y, y = paper, xmin = ymin, xmax = ymax), size = 1.15) +
     coord_cartesian(xlim = c(-0.5, 2.3)) +
     geom_label(data = meta_list$post %>% filter(!paper == "Average"),
                aes(y = paper, label = glue::glue("{y} [{ymin}, {ymax}]"), x = Inf),
-               hjust = "inward", size = 5, fill = "white", label.size = NA) + 
+               hjust = "inward", size = 5, fill = "white", color = "black", label.size = NA,
+               family = "TT Times New Roman") + 
     geom_label(data = meta_list$post %>% filter(paper == "Average"),
                aes(y = paper, label = glue::glue("{y} [{ymin}, {ymax}]"), x = Inf),
-               hjust = "inward", size = 5, fill = "white", label.size = NA) +
+               hjust = "inward", size = 5, fill = "white", color = "black", label.size = NA, 
+               family = "TT Times New Roman") +
     geom_point(data = meta_list$weight, 
                aes(x = eff_size_g, y = paper, size = weight),
                show.legend=FALSE,
@@ -78,17 +80,19 @@ plot_forest <- function(meta_list, size_fac = 1){
                                 levels(meta_list$post$paper)[-1])) +
     xlim(c(-0.5, 4)) +
     scale_color_manual(values = c("#e41a1c", "#377eb8")) +
+    scale_shape_manual(values = c(15,16)) +
     theme_minimal() +
     theme(axis.title.x = element_text(size = 20*size_fac),
           axis.title.y = element_blank(),
-          axis.text.y = element_text(size = 15*size_fac),
+          axis.text.y = element_text(size = 15*size_fac, color = "black"),
           axis.text.x = element_text(size = 15*size_fac),
           panel.grid.major.x = element_blank(),
           panel.grid.minor.x = element_blank(),
           legend.title = element_blank(),
           legend.text = element_text(size=10*size_fac),
           legend.position = "bottom",
-          legend.direction = "horizontal") +
+          legend.direction = "horizontal",
+          text = element_text(family = "TT Times New Roman")) +
     xlab(latex2exp::TeX("Hedges' $g$"))
 }
 
@@ -102,9 +106,7 @@ plot_forest <- function(meta_list, size_fac = 1){
 meta_reg_plot_h <- function(post, ROPE, fac_size = 1){
   post %>% 
     ggplot(aes(x = .param, y = .value, fill = stat(y > ROPE[2]))) +
-    geom_hline(yintercept = 0, col = "black", size = 0.5, alpha = 0.3, linetype = "dashed") +
-    geom_hline(yintercept = ROPE[2], col = "red", size = 0.7, alpha = 0.5) +
-    #geom_hline(yintercept = ROPE[2], col = "red", size = 1.3, alpha = 0.3) +
+    geom_hline(yintercept = ROPE[2], col = "red", size = 1) +
     stat_halfeye(.width = c(0.89), size = 5) +
     cowplot::theme_minimal_hgrid() +
     coord_cartesian(ylim = c(-2,2)) +
@@ -113,7 +115,8 @@ meta_reg_plot_h <- function(post, ROPE, fac_size = 1){
           axis.text.x = element_text(size = 20*fac_size),
           axis.text.y = element_text(size = 20*fac_size),
           axis.title.x = element_blank(),
-          plot.margin=unit(c(1,1,1.5,1.2),"cm")) +
+          plot.margin=unit(c(1,1,1.5,1.2),"cm"),
+          text = element_text(family = "TT Times New Roman")) +
     ylab("Hedges's g") +
     scale_fill_manual(values = c("lightgrey", "lightblue"))
 }
