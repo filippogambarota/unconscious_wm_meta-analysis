@@ -45,11 +45,20 @@ save_plot <- function(plot, name, height, width){
          device = "png", 
          height = height, 
          width = width)
+  
   # Upload
   ggsave(plot = plot, 
          filename = paste0("figures/", name, ".tiff"), 
          dpi = "retina", 
-         device = "tiff", 
+         device = "tiff",
+         compression = "lzw",
+         height = height, 
+         width = width)
+  # Upload
+  ggsave(plot = plot, 
+         filename = paste0("figures/", name, ".eps"), 
+         dpi = "retina", 
+         device = cairo_ps, 
          height = height, 
          width = width)
 }
@@ -92,7 +101,7 @@ fit0_forest <- plot_forest(fit0_list, size_fac = 1.3)
 
 saveRDS(fit0_forest, file = "objects/fit0_forest.rds")
 
-save_plot(fit0_forest, "fit0_forest", height = 16, width = 13)
+save_plot(fit0_forest, "figure-3_forest", height = 16, width = 13)
 
 # Fit0 Publication Bias --------------------------------------------------------
 
@@ -122,19 +131,20 @@ fit0_funnel <- metaviz::viz_funnel(temp_funnel[, 3:4],
                                    ylab = latex2exp::TeX("$\\Standard \\; Error"))
 
 fit0_funnel +
-  geom_point(data = temp_funnel, aes(x = eff_size_g, y = eff_size_se_g, color = published), size = 4) +
+  geom_point(data = temp_funnel, aes(x = eff_size_g, y = eff_size_se_g, color = published, shape = published), size = 4) +
   cowplot::theme_minimal_hgrid() +
   theme(axis.title.x = element_text(size = 20),
         axis.title.y = element_text(size = 20),
         axis.text.x = element_text(size = 15),
         axis.text.y = element_text(size = 15),
-        legend.position = "none") +
+        legend.position = "bottom",
+        text = element_text(family = "TT Times New Roman")) +
   geom_line(stat="smooth", method = "lm", formula = y ~ x,
             size = 0.7,
             linetype = "dashed",
             alpha = 0.7) -> fit0_funnel_egger
 
-save_plot(fit0_funnel_egger, "fit0_pub_bias", height = 8, width = 8)
+save_plot(fit0_funnel_egger, "figure-4_funnel", height = 8, width = 8)
 saveRDS(fit0_funnel_egger, file = "objects/fit0_funnel_egger.rds")
 
 # PRISMA ------------------------------------------------------------------
@@ -154,11 +164,11 @@ prisma <- PRISMAstatement::prisma(
   height = 200
 )
 
-PRISMAstatement:::prisma_pdf(prisma, filename = "figures/prisma_flowchart.pdf")
-pdftools::pdf_convert("figures/prisma_flowchart.pdf", 
+PRISMAstatement:::prisma_pdf(prisma, filename = "figures/figure-1_prisma.pdf")
+pdftools::pdf_convert("figures/figure-1_prisma.pdf", 
                       format = "tiff", 
                       dpi = 300,
-                      filenames = "figures/prisma_flowchart.tiff")
+                      filenames = "figures/figure-1_prisma.tiff")
 
 # ROPE Plot ---------------------------------------------------------------
 
@@ -206,11 +216,11 @@ author_plot <- meta_reg_plot_h(post_list$fit_author, ROPE, fac_size = 1.1) +
 saveRDS(rope_plot, file = "objects/rope_plot.rds")
 saveRDS(author_plot, file = "objects/author_plot.rds")
 
-save_plot(rope_plot, "rope_plot", height = 14, width = 14)
-save_plot(author_plot, "author_plot", height = 10, width = 12)
+save_plot(rope_plot, "figure-6_rope", height = 14, width = 14)
+save_plot(author_plot, "figure-5_author", height = 10, width = 12)
 
 # trial_figure_example -------------------------------------------------------
 
 # This require inkscape installed and activated as command line tool
 
-system("inkscape --export-type='eps' figures/example_trial.svg")
+system("inkscape --export-type='eps' objects/figure-2_example-exp.svg")
