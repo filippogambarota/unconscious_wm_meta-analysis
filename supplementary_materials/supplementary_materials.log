@@ -1,11 +1,11 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.23 (TeX Live 2021) (preloaded format=pdflatex 2021.10.10)  17 OCT 2021 13:39
+This is pdfTeX, Version 3.141592653-2.6-1.40.23 (TeX Live 2021) (preloaded format=pdflatex 2021.10.17)  19 OCT 2021 17:38
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
 **supplementary_materials.tex
 (./supplementary_materials.tex
 LaTeX2e <2021-06-01> patch level 1
-L3 programming layer <2021-08-27> (/home/filippogambarota/.TinyTeX/texmf-dist/t
+L3 programming layer <2021-10-12> (/home/filippogambarota/.TinyTeX/texmf-dist/t
 ex/latex/base/article.cls
 Document Class: article 2021/02/12 v1.4n Standard LaTeX document class
 (/home/filippogambarota/.TinyTeX/texmf-dist/tex/latex/base/size10.clo
@@ -300,7 +300,7 @@ Package: ifvtex 2019/10/25 v1.7 ifvtex legacy package. Use iftex instead.
 \Gm@layoutvoffset=\dimen159
 \Gm@dimlist=\toks24
 ) (/home/filippogambarota/.TinyTeX/texmf-dist/tex/latex/fancyvrb/fancyvrb.sty
-Package: fancyvrb 2021/08/12 v3.8 verbatim text (tvz,hv)
+Package: fancyvrb 2021/10/15 v3.9 verbatim text (tvz,hv)
 \FV@CodeLineNo=\count282
 \FV@InFile=\read2
 \FV@TabBox=\box52
@@ -492,7 +492,7 @@ LaTeX Info: Redefining \cite on input line 694.
 )
 (/home/filippogambarota/.TinyTeX/texmf-dist/tex/latex/l3backend/l3backend-pdfte
 x.def
-File: l3backend-pdftex.def 2021-08-04 L3 backend support: PDF output (pdfTeX)
+File: l3backend-pdftex.def 2021-10-12 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count310
 \l__pdf_internal_box=\box73
 ) (./supplementary_materials.aux)
@@ -646,132 +646,124 @@ File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 
 ] [4] [5]
 LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <10> not available
-(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 420.
+(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 435.
+[6] [7] [8] [9
 
-Package natbib Warning: Citation `Schad2020-l' on page 6 undefined on input lin
-e 426.
+] [10
 
-[6] [7] [8
-
-] [9
-
-] [10]
-<supplementary_materials_files/figure-latex/prior-plot-1.pdf, id=262, 469.755pt
+] [11]
+<supplementary_materials_files/figure-latex/prior-plot-1.pdf, id=279, 469.755pt
  x 325.215pt>
 File: supplementary_materials_files/figure-latex/prior-plot-1.pdf Graphic file 
 (type pdf)
 <use supplementary_materials_files/figure-latex/prior-plot-1.pdf>
 Package pdftex.def Info: supplementary_materials_files/figure-latex/prior-plot-
-1.pdf  used on input line 685.
+1.pdf  used on input line 700.
 (pdftex.def)             Requested size: 200.75067pt x 138.98123pt.
-<supplementary_materials_files/figure-latex/prior-sens-1.pdf, id=263, 469.755pt
+<supplementary_materials_files/figure-latex/prior-sens-1.pdf, id=280, 469.755pt
  x 325.215pt>
 File: supplementary_materials_files/figure-latex/prior-sens-1.pdf Graphic file 
 (type pdf)
 <use supplementary_materials_files/figure-latex/prior-sens-1.pdf>
 Package pdftex.def Info: supplementary_materials_files/figure-latex/prior-sens-
-1.pdf  used on input line 694.
+1.pdf  used on input line 709.
 (pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
-<supplementary_materials_files/figure-latex/loo-paper-1.pdf, id=265, 469.755pt 
+<supplementary_materials_files/figure-latex/loo-paper-1.pdf, id=282, 469.755pt 
 x 722.7pt>
 File: supplementary_materials_files/figure-latex/loo-paper-1.pdf Graphic file (
 type pdf)
 <use supplementary_materials_files/figure-latex/loo-paper-1.pdf>
 Package pdftex.def Info: supplementary_materials_files/figure-latex/loo-paper-1
-.pdf  used on input line 721.
+.pdf  used on input line 736.
 (pdftex.def)             Requested size: 422.78276pt x 650.43501pt.
 
-LaTeX Warning: Float too large for page by 23.94943pt on input line 726.
+LaTeX Warning: Float too large for page by 23.94943pt on input line 741.
 
-<supplementary_materials_files/figure-latex/loo-study-fig-1.pdf, id=268, 469.75
+<supplementary_materials_files/figure-latex/loo-study-fig-1.pdf, id=285, 469.75
 5pt x 722.7pt>
 File: supplementary_materials_files/figure-latex/loo-study-fig-1.pdf Graphic fi
 le (type pdf)
 <use supplementary_materials_files/figure-latex/loo-study-fig-1.pdf>
 Package pdftex.def Info: supplementary_materials_files/figure-latex/loo-study-f
-ig-1.pdf  used on input line 750.
+ig-1.pdf  used on input line 765.
 (pdftex.def)             Requested size: 422.78276pt x 650.43501pt.
 
-LaTeX Warning: Float too large for page by 23.94943pt on input line 755.
+LaTeX Warning: Float too large for page by 23.94943pt on input line 770.
 
-[11
+[12
 
 pdfTeX warning (ext4): destination with the same identifier (name{figure.1}) ha
 s been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.769 \end{longtable}
+l.784 \end{longtable}
                       <./supplementary_materials_files/figure-latex/prior-plot-
-1.pdf>] [12pdfTeX warning (ext4): destination with the same identifier (name{fi
+1.pdf>] [13pdfTeX warning (ext4): destination with the same identifier (name{fi
 gure.2}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.769 \end{longtable}
+l.784 \end{longtable}
                       <./supplementary_materials_files/figure-latex/prior-sens-
-1.pdf>] [13pdfTeX warning (ext4): destination with the same identifier (name{fi
+1.pdf>] [14pdfTeX warning (ext4): destination with the same identifier (name{fi
 gure.3}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.769 \end{longtable}
+l.784 \end{longtable}
                       <./supplementary_materials_files/figure-latex/loo-paper-1
-.pdf>] [14pdfTeX warning (ext4): destination with the same identifier (name{fig
+.pdf>] [15pdfTeX warning (ext4): destination with the same identifier (name{fig
 ure.4}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.769 \end{longtable}
+l.784 \end{longtable}
                       <./supplementary_materials_files/figure-latex/loo-study-f
-ig-1.pdf>] [15] [16
-
-] [17
+ig-1.pdf>] [16] [17
 
 ] [18
 
+] [19] [20
+
 ]
-<supplementary_materials_files/figure-latex/ind-power-1.pdf, id=365, 469.755pt 
+<supplementary_materials_files/figure-latex/ind-power-1.pdf, id=385, 469.755pt 
 x 325.215pt>
 File: supplementary_materials_files/figure-latex/ind-power-1.pdf Graphic file (
 type pdf)
 <use supplementary_materials_files/figure-latex/ind-power-1.pdf>
 Package pdftex.def Info: supplementary_materials_files/figure-latex/ind-power-1
-.pdf  used on input line 979.
+.pdf  used on input line 994.
 (pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
-[19
+[21
 
 pdfTeX warning (ext4): destination with the same identifier (name{figure.5}) ha
 s been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.991 \section{Packages}\label{packages}}
-                                          <./supplementary_materials_files/figu
-re-latex/ind-power-1.pdf>] [20
-
-] [21
-
-] (./supplementary_materials.bbl [22
+l.1006 \section{Packages}\label{packages}}
+                                           <./supplementary_materials_files/fig
+ure-latex/ind-power-1.pdf>] [22
 
 ] [23
 
-])
+] (./supplementary_materials.bbl [24
 
-Package natbib Warning: There were undefined citations.
+] [25
 
-[24] (./supplementary_materials.aux)
+]) [26] (./supplementary_materials.aux)
 Package rerunfilecheck Info: File `supplementary_materials.out' has not changed
 .
-(rerunfilecheck)             Checksum: BBA1F9C247DC36613C6A3EEFE21D5D66;2703.
+(rerunfilecheck)             Checksum: 2C3A49200ED592ECD0475450CC81E42E;2844.
  ) 
 Here is how much of TeX's memory you used:
- 13218 strings out of 480559
- 195541 string characters out of 5902374
- 548110 words of memory out of 5000000
- 30432 multiletter control sequences out of 15000+600000
+ 13232 strings out of 480559
+ 195793 string characters out of 5902374
+ 548246 words of memory out of 5000000
+ 30440 multiletter control sequences out of 15000+600000
  463377 words of font info for 74 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 60i,8n,66p,633b,479s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/home/filippogambarota/.TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{/ho
-me/filippogambarota/.TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathex.enc}{/home
-/filippogambarota/.TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{/home/filip
-pogambarota/.TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{/home/filippo
+ 60i,8n,66p,633b,488s stack positions out of 5000i,500n,10000p,200000b,80000s
+{/home/filippogambarota/.TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{/ho
+me/filippogambarota/.TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{/home
+/filippogambarota/.TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathex.enc}{/home/f
+ilippogambarota/.TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{/home/filippo
 gambarota/.TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}{/home/filippoga
 mbarota/.TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc}</home/filippogambaro
 ta/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></home/filippogambarota
@@ -793,10 +785,10 @@ m/lmsy7.pfb></home/filippogambarota/.TinyTeX/texmf-dist/fonts/type1/public/lm/l
 mtk10.pfb></home/filippogambarota/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmt
 t10.pfb></home/filippogambarota/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmtti
 10.pfb>
-Output written on supplementary_materials.pdf (24 pages, 446295 bytes).
+Output written on supplementary_materials.pdf (26 pages, 439218 bytes).
 PDF statistics:
- 533 PDF objects out of 1000 (max. 8388607)
- 451 compressed objects within 5 object streams
- 139 named destinations out of 1000 (max. 500000)
- 178 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 555 PDF objects out of 1000 (max. 8388607)
+ 471 compressed objects within 5 object streams
+ 145 named destinations out of 1000 (max. 500000)
+ 186 words of extra memory for PDF output out of 10000 (max. 10000000)
 

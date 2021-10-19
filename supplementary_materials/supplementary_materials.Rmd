@@ -1,5 +1,5 @@
 ---
-title: "Unconscious Visual Working Memory. A critical review and Bayesian meta-analysis"
+title: "Unconscious Visual Working Memory: a critical review and Bayesian meta-analysis"
 subtitle: "Supplementary Materials"
 author: "Filippo Gambarota"
 bibliography: ["reference.bib"]
@@ -212,6 +212,20 @@ small samples $J$ with $df$ is $n - 1$ as:
 $$J = 1 - \frac{3}{4df-1}$$ The correction factor is applied to the
 effect size as $g = J \times d$ and the variance $V_g = J^2 \times V_d$.
 
+## Multiple effects
+
+When paper reported *multiple effects*, in the same study we combined the effects using the approach explained in Borenstein [-@Borenstein2009-mo, p.225]. Given that multiple effects are no more than two per experiment, we combined the effect sizes using:
+1
+$$
+\bar{Y} = \frac{1}{2}(Y_1 + Y_2)
+$$
+
+The variances are combined assuming a correlation $r = 0.5$ and using:
+
+$$
+V_{\bar{Y}} = \frac{1}{4}(V_{Y_1} + V_{Y_2} + 2r\sqrt{V_{Y_1}}\sqrt{V_{Y_1}})
+$$
+
 ## Other relevant computations
 
 Relevant measures in three-level meta-analysis models are the percentage of explained heterogeneity ($R^2$) and the percentage of heterogeneity associated with a specific clustering level (*intra-class correlation*). We use the formulas provided by Cheung [-@Cheung2019-po; -@Cheung2014-fg]. We used the **median** of each relevant posterior distribution parameter in order to compute the formula. The computation of the $R^2$ values can be sometimes negative due to the $\tau$ estimation, in that case the value was truncated to 0.
@@ -268,7 +282,7 @@ brm(yi|se(sei) ~ 0 + <predictors> + (1|paper_id/effect_id),
     chains = 6)  # number of MCMC chains
 ```
 
-In particula for categorical predictors, we used the **cell-mean parametrization** `0 +` (i.e., removing the intercept) in order to compute directly the estimated mean for each predictor level and eventually compute the desired contrast from the posterior distribution [@Schad2020-l]
+In particular for categorical predictors, we used the **cell-mean parametrization** `0 +` (i.e., removing the intercept) in order to compute directly the estimated mean for each predictor level and eventually compute the desired contrast from the posterior distribution [@Schad2020-ls]
 
 Given that we are essentially estimating the average effect size for each experimental condition, we used the same prior distribution for each parameter.
 
@@ -559,7 +573,7 @@ all_obj$rope_table %>%
     mutate(within_rope = ifelse(startsWith(.param, "Tau"), NA, within_rope),
          outside_rope = ifelse(startsWith(.param, "Tau"), NA, outside_rope)) %>% 
   make_table(caption = 'Rope table of relevant models') %>% 
-  kable_styling(full_width = F, font_size = 7) %>% 
+  kable_styling(full_width = F, font_size = 10) %>% 
   collapse_rows(columns = 1, latex_hline = "full", valign = "middle") %>% 
   landscape()
 ```
