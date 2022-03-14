@@ -52,8 +52,11 @@ colnames(tab) <- col_names
 meta_clean %>%
   select(first_author, year, published, sample_size, ntrials,
          paradigm, blinding_paradigm, acc_measure,
-         target_type, task_type, eff_size_g, eff_size_se_g) %>% 
-  mutate(author_year = paste0(first_author, " (", year, ")")) %>% 
+         target_type, target_duration, task_type, eff_size_g, eff_size_se_g) %>% 
+  mutate(author_year = paste0(first_author, " (", year, ")"),
+         target_duration = as.integer(target_duration),
+         ntrials = as.integer(ntrials),
+         sample_size = as.integer(sample_size)) %>% 
   select(-first_author, -year) %>% 
   select(author_year, everything()) %>% 
   mutate(blinding_paradigm = case_when(blinding_paradigm == "Backward Masking" ~ "BM",
@@ -66,6 +69,7 @@ meta_clean %>%
          "Sample Size" = sample_size,
          "Mean Trials" = ntrials,
          "WM Paradigm" = paradigm,
+         "Target Duration (ms)" = target_duration,
          "Blinding" = blinding_paradigm,
          "Acc Measure" = acc_measure,
          "Target" = target_type,
