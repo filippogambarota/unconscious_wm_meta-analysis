@@ -1,7 +1,11 @@
 # Unconscious WM meta-analysis
 
 This is the repository for the paper "Unconscious Visual Working Memory. A critical review and
-Bayesian meta-analysis". This folder contains the full `.Rproj` in order to reproduce all the analysis, figures, tables and supplementary materials. The folder structure is the following:
+Bayesian meta-analysis". Details about the project can be found on OSF https://osf.io/4bfnm/.
+
+# Analysis Folder
+
+This folder contains the full `.Rproj` in order to reproduce all the analysis, figures, tables and supplementary materials. The folder structure is the following:
 
 - `data/` contains the raw and cleaned data
 - `figures/` contains figures generated for the paper
